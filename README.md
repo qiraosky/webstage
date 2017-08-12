@@ -1,4 +1,4 @@
-# Hello welcome to jqpacket 
+# Welcome to jqpacket 
 jqpacket is a javascript integration framework use jquery and jquery plugin<br/>
 
 version 0.0.0
