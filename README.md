@@ -10,7 +10,7 @@ version 0.0.0
 3, Ioc <br/>
 4, Form binding & verification<br/>
 5, Adjustable style<br/>
-6, 
+6,  
 
 
 ## basic components
