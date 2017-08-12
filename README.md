@@ -14,7 +14,7 @@ version 0.0.0
 
 
 ## basic components
-1, datagrid<br/>
+1, datatable datagrid<br/>
 2, tree<br/>
 3, selector <br/>
 4, tab<br/>
@@ -22,9 +22,11 @@ version 0.0.0
 6, datetime<br/>
 7, progress<br/>
 8, dialog<br/>
-9, notifications<br/>
+9, notifications message<br/>
 10,accordion<br/>
 11,uploder<br/>
 12,loading<br/>
 13,basic panel<br/>
-
+14,slider<br/>
+15,timeSpinner<br/>
+16,numberSpinner<br/>
