@@ -2,9 +2,9 @@
 	
 	var initData = {
 		"Comments": "工作开始时间（结束时间）必须使用“:”进行分隔；break 为中断时间，比如，上班时间为 8：00，下班时间为18：00，中间休息2小时，12:00 - 14:00,则上午时间为 8:00 - 12:00 下午时间为 14:00-16:00；节日配置：日期使用月日，必须使用“-”分隔;数组的第一个位置为开始时间，数据第二个位置为结束时间，两个位置固定必须存在，否则此节日将被忽略;statutoryAdjustment为调休工作日，注意不记录休息日，只记录工作日",
-		"workStartTime":"00:00",
-		"workEndTime":"00:00",
-		"break":["12:00","12:00"],
+		"workStartTime":"09:00",
+		"workEndTime":"18:00",
+		"break":["12:00","13:00"],
 		"data": {
 			"2017": {
 				"newYear": ["12-31", "01-02"],
@@ -65,8 +65,38 @@
 		var workTimeLongList = [];
 		var basicDays = listDateFromeStartToEndWithoutStartAndEnd(startTime, endTime);
 
-		//TODO:开始时间情况分析
-
+		//开始时间情况分析
+		if (isWorkDay(startTime, initData)){
+			var startWorkDayStatusArray = getWorkDayStatusArray(startTime, initData);
+			var startTimeMillSec = startTime.getTime();
+			//上午上班之前，则计全天
+			if (startTimeMillSec <= startWorkDayStatusArray[0]){
+				workTimeLongList.push(oneWorkDayTimeLong);
+			} else if (startTimeMillSec > startWorkDayStatusArray[0] 
+				&& startTimeMillSec <= startWorkDayStatusArray[1] ){
+				//在上午上班时间
+				workTimeLongList.push(
+					(startWorkDayStatusArray[1] - startTimeMillSec)
+					 + 
+					(startWorkDayStatusArray[3] - startWorkDayStatusArray[2])
+				);
+			} else if (startTimeMillSec > startWorkDayStatusArray[1] && 
+				startTimeMillSec <= startWorkDayStatusArray[2]
+			){
+				//在午休时间
+				workTimeLongList.push(
+					(startWorkDayStatusArray[3] - startWorkDayStatusArray[2])
+				);
+			} else if (startTimeMillSec > startWorkDayStatusArray[2] &&
+				startTimeMillSec <= startWorkDayStatusArray[3]){
+				//下午上班时间
+				workTimeLongList.push(
+					(startWorkDayStatusArray[3] - startTimeMillSec)
+				);
+			}else {
+				//下午下班时间，无值
+			}
+		}
 
 		//中间时间分析
 		for (var item in basicDays){
@@ -77,9 +107,51 @@
 
 
 		//TODO:结束时间情况分析
+		if (isWorkDay(endTime, initData)) {
+			var endWorkDayStatusArray = getWorkDayStatusArray(endTime, initData);
+			var endTimeMillSec = endTime.getTime();
 
+			if (endTimeMillSec <= endWorkDayStatusArray[0]) {
+				//上午上班之前，不计数据
+			} else if (endTimeMillSec > endWorkDayStatusArray[0]
+				&& endTimeMillSec <= endWorkDayStatusArray[1]) {
+				//在上午上班时间
+				workTimeLongList.push(
+					endTimeMillSec - endWorkDayStatusArray[0]
+				);
+			} else if (endTimeMillSec > endWorkDayStatusArray[1] &&
+				endTimeMillSec <= endWorkDayStatusArray[2]
+			) {
+				//在午休时间
+				workTimeLongList.push(
+					(endWorkDayStatusArray[1] - endWorkDayStatusArray[0])
+				);
+			} else if (endTimeMillSec > endWorkDayStatusArray[2] &&
+				endTimeMillSec <= endWorkDayStatusArray[3]) {
+				//下午上班时间
+				workTimeLongList.push(
+					(endWorkDayStatusArray[1] - endWorkDayStatusArray[0])
+					+
+					(endTimeMillSec - endWorkDayStatusArray[2])
+				);
+			} else {
+				//下午下班时间，计全天
+				workTimeLongList.push(oneWorkDayTimeLong);
+			}
+		}
 
 		return workTimeLongList;
+	}
+
+
+	//得到工作日时间列表：上午上班，上午下班，下午上班，下午下班
+	function getWorkDayStatusArray(date, initData){
+		var workDayStatusArray = [];
+		workDayStatusArray.push(newDateWithSomeDateAndStringTime(date, initData.workStartTime).getTime());
+		workDayStatusArray.push(newDateWithSomeDateAndStringTime(date, initData.break[0]).getTime());
+		workDayStatusArray.push(newDateWithSomeDateAndStringTime(date, initData.break[1]).getTime());
+		workDayStatusArray.push(newDateWithSomeDateAndStringTime(date, initData.workEndTime).getTime());
+		return workDayStatusArray;
 	}
 
 
@@ -376,7 +448,7 @@
 
 
 
-	var startTime_1 = "2017-12-26 20:00:00";
+	var startTime_1 = "2017-12-26 10:00:00";
 	var endTime_1 = "2018-01-05 10:20:41";
 	console.log("开始时间：" + startTime_1);
 	console.log("结束时间：" + endTime_1);
