@@ -2,9 +2,9 @@
 	
 	var initData = {
 		"Comments": "工作开始时间（结束时间）必须使用“:”进行分隔；break 为中断时间，比如，上班时间为 8：00，下班时间为18：00，中间休息2小时，12:00 - 14:00,则上午时间为 8:00 - 12:00 下午时间为 14:00-16:00；节日配置：日期使用月日，必须使用“-”分隔;数组的第一个位置为开始时间，数据第二个位置为结束时间，两个位置固定必须存在，否则此节日将被忽略;statutoryAdjustment为调休工作日，注意不记录休息日，只记录工作日",
-		"workStartTime":"09:00",
-		"workEndTime":"18:00",
-		"break":["12:00","13:00"],
+		"workStartTime":"00:00",
+		"workEndTime":"00:00",
+		"break":["12:00","12:00"],
 		"data": {
 			"2017": {
 				"newYear": ["12-31", "01-02"],
@@ -150,7 +150,12 @@
 		workDayStatusArray.push(newDateWithSomeDateAndStringTime(date, initData.workStartTime).getTime());
 		workDayStatusArray.push(newDateWithSomeDateAndStringTime(date, initData.break[0]).getTime());
 		workDayStatusArray.push(newDateWithSomeDateAndStringTime(date, initData.break[1]).getTime());
-		workDayStatusArray.push(newDateWithSomeDateAndStringTime(date, initData.workEndTime).getTime());
+		if (isZeroTimeStr(initData.workEndTime)){
+			workDayStatusArray.push(newDateWithSomeDateAndStringTime(getNextDay(date), initData.workEndTime).getTime());
+		}else{
+			workDayStatusArray.push(newDateWithSomeDateAndStringTime(date, initData.workEndTime).getTime());
+		}
+		
 		return workDayStatusArray;
 	}
 
@@ -448,7 +453,7 @@
 
 
 
-	var startTime_1 = "2017-12-26 10:00:00";
+	var startTime_1 = "2017-12-26 20:00:00";
 	var endTime_1 = "2018-01-05 10:20:41";
 	console.log("开始时间：" + startTime_1);
 	console.log("结束时间：" + endTime_1);
