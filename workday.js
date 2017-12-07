@@ -1,8 +1,8 @@
+
 /**
  * 工作时间计算
- * @param {*} initData 
  */
-function WorkTimeCalculation(initData) {
+function WorkTimeCalculation() {
 	this.getWorkTime = getWorkTime;
 
 
@@ -38,6 +38,42 @@ function WorkTimeCalculation(initData) {
 
 
 	function getWorkTime(initData, startTime, endTime) {
+
+		if(!initData || !(initData instanceof Object)){
+			console.error("WorkTimeCalculation: 未给定初始化配置");
+			return;
+		}
+
+		if(!initData.workStartTime){
+			console.error("WorkTimeCalculation: 未指定工作开始时间 workStartTime");
+			return;
+		}
+
+		if(!initData.workEndTime){
+			console.error("WorkTimeCalculation: 未指定工作结束时间 workEndTime");
+			return;
+		}
+
+		if(!initData.break || !(initData.break instanceof Array)){
+			console.error("WorkTimeCalculation: 中间休息时间 break 未指定或格式不正确");
+			return;
+		}
+
+		if(!initData.data || !(initData.data instanceof Array)){
+			console.error("WorkTimeCalculation: 节日配置（data）未设置或格式不正确");
+			return;
+		}
+
+		if(!(startTime instanceof Date)){
+			console.error("WorkTimeCalculation: startTime 不是一个日期类型");
+			return;
+		}
+
+		if(!(endTime instanceof Date)){
+			console.error("WorkTimeCalculation: endTime 不是一个日期类型");
+			return;
+		}
+
 
 		var workBreakTimeLong = getWorkBreakTimeLong(initData);
 		var oneWorkDayTimeLong = getOneWorkDayTimeLong(initData) - workBreakTimeLong;
