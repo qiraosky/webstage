@@ -1,4 +1,3 @@
-
 /**
  * 工作时间计算
  */
@@ -59,7 +58,7 @@ function WorkTimeCalculation() {
 			return;
 		}
 
-		if(!initData.data || !(initData.data instanceof Array)){
+		if(!initData.data || !(initData.data instanceof Object)){
 			console.error("WorkTimeCalculation: 节日配置（data）未设置或格式不正确");
 			return;
 		}
@@ -71,6 +70,11 @@ function WorkTimeCalculation() {
 
 		if(!(endTime instanceof Date)){
 			console.error("WorkTimeCalculation: endTime 不是一个日期类型");
+			return;
+		}
+
+		if(startTime.getTime() >= endTime.getTime()){
+			console.error("WorkTimeCalculation: 开始时间小于等于结束时间");
 			return;
 		}
 
@@ -103,83 +107,184 @@ function WorkTimeCalculation() {
 	function getWorkDayTimeLongList(initData, startTime, endTime, oneWorkDayTimeLong) {
 		var workTimeLongList = [];
 		var basicDays = listDateFromeStartToEndWithoutStartAndEnd(startTime, endTime);
+		var isStartEndSameDate = isSameDate(startTime,endTime);
 
-		//开始时间情况分析
-		if (isWorkDay(startTime, initData)) {
-			var startWorkDayStatusArray = getWorkDayStatusArray(startTime, initData);
-			var startTimeMillSec = startTime.getTime();
-			//上午上班之前，则计全天
-			if (startTimeMillSec <= startWorkDayStatusArray[0]) {
-				workTimeLongList.push(oneWorkDayTimeLong);
-			} else if (startTimeMillSec > startWorkDayStatusArray[0]
-				&& startTimeMillSec <= startWorkDayStatusArray[1]) {
-				//在上午上班时间
-				workTimeLongList.push(
-					(startWorkDayStatusArray[1] - startTimeMillSec)
-					+
-					(startWorkDayStatusArray[3] - startWorkDayStatusArray[2])
-				);
-			} else if (startTimeMillSec > startWorkDayStatusArray[1] &&
-				startTimeMillSec <= startWorkDayStatusArray[2]
-			) {
-				//在午休时间
-				workTimeLongList.push(
-					(startWorkDayStatusArray[3] - startWorkDayStatusArray[2])
-				);
-			} else if (startTimeMillSec > startWorkDayStatusArray[2] &&
-				startTimeMillSec <= startWorkDayStatusArray[3]) {
-				//下午上班时间
-				workTimeLongList.push(
-					(startWorkDayStatusArray[3] - startTimeMillSec)
-				);
-			} else {
-				//下午下班时间，无值
+
+		//开始和结束时间在同一天的情况
+		if(isStartEndSameDate){
+			if(isWorkDay(startTime, initData)){
+				//工作时间：
+				//startWorkDayStatusArray[0] 上午上班时间
+				//startWorkDayStatusArray[1] 上午下班时间
+				//startWorkDayStatusArray[2] 下午上班时间
+				//startWorkDayStatusArray[3] 下午下班时间
+				var startWorkDayStatusArray = getWorkDayStatusArray(startTime, initData);
+				var startTimeMillSec = startTime.getTime();
+				var endTimeMillSec = endTime.getTime();
+				var thisWorkDayTimeLong = 0;  
+
+				if(isSameDayWorkTime(startTimeMillSec, endTimeMillSec, startWorkDayStatusArray)){
+					//开始时间在上午上班前
+					if(startTimeMillSec < startWorkDayStatusArray[0]){
+						if(endTimeMillSec >= startWorkDayStatusArray[0] &&  endTimeMillSec < startWorkDayStatusArray[1]){
+							thisWorkDayTimeLong = endTimeMillSec - startWorkDayStatusArray[0];
+						}else if(endTimeMillSec >= startWorkDayStatusArray[1] && endTimeMillSec <= startWorkDayStatusArray[2] ){
+							thisWorkDayTimeLong = startWorkDayStatusArray[1] - startWorkDayStatusArray[0];
+						}else  if(endTimeMillSec > startWorkDayStatusArray[2] && endTimeMillSec <= startWorkDayStatusArray[3] ){
+							thisWorkDayTimeLong = (endTimeMillSec - startWorkDayStatusArray[2]) 
+													+ (startWorkDayStatusArray[1] - startWorkDayStatusArray[0]);
+						}else  if(endTimeMillSec > startWorkDayStatusArray[3] ){
+							thisWorkDayTimeLong = (startWorkDayStatusArray[3] - startWorkDayStatusArray[2]) 
+													+ (startWorkDayStatusArray[1] - startWorkDayStatusArray[0]);
+						}else {
+							console.error("开始时间在上午上班前, 未知的计算错误");
+						}
+					}else if(startTimeMillSec >= startWorkDayStatusArray[0] && startTimeMillSec < startWorkDayStatusArray[1]){
+						//开始时间上午上班时间
+						if(endTimeMillSec >= startWorkDayStatusArray[0] &&  endTimeMillSec < startWorkDayStatusArray[1]){
+							thisWorkDayTimeLong = endTimeMillSec - startTimeMillSec;
+						}else if(endTimeMillSec >= startWorkDayStatusArray[1] && endTimeMillSec <= startWorkDayStatusArray[2] ){
+							thisWorkDayTimeLong = startWorkDayStatusArray[1] - startTimeMillSec;
+						}else  if(endTimeMillSec > startWorkDayStatusArray[2] && endTimeMillSec <= startWorkDayStatusArray[3] ){
+							thisWorkDayTimeLong = (endTimeMillSec - startWorkDayStatusArray[2]) 
+													+ (startWorkDayStatusArray[1] - startTimeMillSec);
+						}else  if(endTimeMillSec > startWorkDayStatusArray[3] ){
+							thisWorkDayTimeLong = (startWorkDayStatusArray[3] - startWorkDayStatusArray[2]) 
+													+ (startWorkDayStatusArray[1] - startTimeMillSec);
+						}else {
+							console.error("开始时间上午上班时间, 未知的计算错误");
+						}
+
+					}else if(startTimeMillSec >= startWorkDayStatusArray[1] && startTimeMillSec < startWorkDayStatusArray[2]){
+						//开始时间在中午休息时间
+						if(endTimeMillSec > startWorkDayStatusArray[2] && endTimeMillSec <= startWorkDayStatusArray[3] ){
+							thisWorkDayTimeLong = (endTimeMillSec - startWorkDayStatusArray[2]);
+						}else  if(endTimeMillSec > startWorkDayStatusArray[3] ){
+							thisWorkDayTimeLong = (startWorkDayStatusArray[3] - startWorkDayStatusArray[2]);
+						}else {
+							console.error("开始时间在中午休息时间, 未知的计算错误");
+						}
+					}else if(startTimeMillSec >= startWorkDayStatusArray[2] && startTimeMillSec < startWorkDayStatusArray[3]){
+						//开始时间在下午上班时间
+						if(endTimeMillSec > startWorkDayStatusArray[2] && endTimeMillSec <= startWorkDayStatusArray[3] ){
+							thisWorkDayTimeLong = (endTimeMillSec - startTimeMillSec);
+						}else  if(endTimeMillSec > startWorkDayStatusArray[3] ){
+							thisWorkDayTimeLong = (startWorkDayStatusArray[3] - startTimeMillSec);
+						}else {
+							console.error("开始时间在下午上班时间, 未知的计算错误");
+						}
+					}else{
+						console.error("开始时间不在正确的区间中，未知的计算错误");
+					}
+
+					workTimeLongList.push(thisWorkDayTimeLong);
+				}
+			}else{
+				console.error("开始和结束时间都在非工作日，请检查配置");
 			}
-		}
+		}else{
+		//开始和结束时间不在同一天的情况
+				//开始时间情况分析
+				if (isWorkDay(startTime, initData)) {
+					var startWorkDayStatusArray = getWorkDayStatusArray(startTime, initData);
+					var startTimeMillSec = startTime.getTime();
 
-		//中间时间分析
-		for (var item in basicDays) {
-			if (isWorkDay(basicDays[item], initData)) {
-				workTimeLongList.push(oneWorkDayTimeLong);
-			}
-		}
+					//上午上班之前，则计全天
+					if (startTimeMillSec <= startWorkDayStatusArray[0]) {
+						workTimeLongList.push(oneWorkDayTimeLong);
+					} else if (startTimeMillSec > startWorkDayStatusArray[0]
+						&& startTimeMillSec <= startWorkDayStatusArray[1]) {
+						//在上午上班时间
+						workTimeLongList.push(
+							(startWorkDayStatusArray[1] - startTimeMillSec)
+							+
+							(startWorkDayStatusArray[3] - startWorkDayStatusArray[2])
+						);
+					} else if (startTimeMillSec > startWorkDayStatusArray[1] &&
+						startTimeMillSec <= startWorkDayStatusArray[2]
+					) {
+						//在午休时间
+						workTimeLongList.push(
+							(startWorkDayStatusArray[3] - startWorkDayStatusArray[2])
+						);
+					} else if (startTimeMillSec > startWorkDayStatusArray[2] &&
+						startTimeMillSec <= startWorkDayStatusArray[3]) {
+						//下午上班时间
+						workTimeLongList.push(
+							(startWorkDayStatusArray[3] - startTimeMillSec)
+						);
+					} else {
+						//下午下班时间，无值
+					}
+				}
+
+				//中间时间分析
+				for (var item in basicDays) {
+					if (isWorkDay(basicDays[item], initData)) {
+						workTimeLongList.push(oneWorkDayTimeLong);
+					}
+				}
 
 
-		//TODO:结束时间情况分析
-		if (isWorkDay(endTime, initData)) {
-			var endWorkDayStatusArray = getWorkDayStatusArray(endTime, initData);
-			var endTimeMillSec = endTime.getTime();
+				//TODO:结束时间情况分析
+				if (isWorkDay(endTime, initData)) {
+					var endWorkDayStatusArray = getWorkDayStatusArray(endTime, initData);
+					var endTimeMillSec = endTime.getTime();
 
-			if (endTimeMillSec <= endWorkDayStatusArray[0]) {
-				//上午上班之前，不计数据
-			} else if (endTimeMillSec > endWorkDayStatusArray[0]
-				&& endTimeMillSec <= endWorkDayStatusArray[1]) {
-				//在上午上班时间
-				workTimeLongList.push(
-					endTimeMillSec - endWorkDayStatusArray[0]
-				);
-			} else if (endTimeMillSec > endWorkDayStatusArray[1] &&
-				endTimeMillSec <= endWorkDayStatusArray[2]
-			) {
-				//在午休时间
-				workTimeLongList.push(
-					(endWorkDayStatusArray[1] - endWorkDayStatusArray[0])
-				);
-			} else if (endTimeMillSec > endWorkDayStatusArray[2] &&
-				endTimeMillSec <= endWorkDayStatusArray[3]) {
-				//下午上班时间
-				workTimeLongList.push(
-					(endWorkDayStatusArray[1] - endWorkDayStatusArray[0])
-					+
-					(endTimeMillSec - endWorkDayStatusArray[2])
-				);
-			} else {
-				//下午下班时间，计全天
-				workTimeLongList.push(oneWorkDayTimeLong);
-			}
-		}
+					if (endTimeMillSec <= endWorkDayStatusArray[0]) {
+						//上午上班之前，不计数据
+					} else if (endTimeMillSec > endWorkDayStatusArray[0]
+						&& endTimeMillSec <= endWorkDayStatusArray[1]) {
+						//在上午上班时间
+						workTimeLongList.push(
+							endTimeMillSec - endWorkDayStatusArray[0]
+						);
+					} else if (endTimeMillSec > endWorkDayStatusArray[1] &&
+						endTimeMillSec <= endWorkDayStatusArray[2]
+					) {
+						//在午休时间
+						workTimeLongList.push(
+							(endWorkDayStatusArray[1] - endWorkDayStatusArray[0])
+						);
+					} else if (endTimeMillSec > endWorkDayStatusArray[2] &&
+						endTimeMillSec <= endWorkDayStatusArray[3]) {
+						//下午上班时间
+						workTimeLongList.push(
+							(endWorkDayStatusArray[1] - endWorkDayStatusArray[0])
+							+
+							(endTimeMillSec - endWorkDayStatusArray[2])
+						);
+					} else {
+						//下午下班时间，计全天
+						workTimeLongList.push(oneWorkDayTimeLong);
+					}
+				}
+
+		}//end of 开始和结束时间不在同一天的情况
 
 		return workTimeLongList;
+	}
+
+
+	//在同一天，判断是否开始和结束时间都在工作时间
+	function isSameDayWorkTime(startTimeMillSec, endTimeMillSec, startWorkDayStatusArray){
+		if(startTimeMillSec >= endTimeMillSec){
+			console.error("开始时间大于等于结束时间");
+			return false;
+		}
+		if(endTimeMillSec <= startWorkDayStatusArray[0]){
+			console.error("结束时间小于等于上午上班时间，开始和结束时间都不在工作时间");
+			return false;
+		}
+		if(startTimeMillSec >= startWorkDayStatusArray[1] && endTimeMillSec <= startWorkDayStatusArray[2]){
+			console.error("开始时间大于等于中午下班时间，结束时间小于等于下午上班时间，开始和结束时间都不在工作时间");
+			return false;
+		}
+		if(startTimeMillSec >= startWorkDayStatusArray[3]){
+			console.error("开始时间大于等于下午下班时间，开始和结束时间都不在工作时间");
+			return false;
+		}
+		return true;
 	}
 
 
@@ -368,6 +473,11 @@ function WorkTimeCalculation() {
 	//列出排除了开始日期和结束日期在外的中间的日期列表
 	function listDateFromeStartToEndWithoutStartAndEnd(startTime, endTime) {
 		var days = [];
+		//如果是同一天，则直接返回空数组
+		if (isSameDate(startTime, endTime)) {
+			return days;
+		}
+
 		startTime = newDateWithSomeDateAndStringTime(new Date(startTime.getTime() + 24 * 3600 * 1000), "00:00:00");
 		endTime = newDateWithSomeDateAndStringTime(endTime, "00:00:00");
 
@@ -491,3 +601,46 @@ function WorkTimeCalculation() {
 	}
 
 }
+
+
+//测试代码
+/*
+(function(){
+	var initData = {
+		"Comments": "工作开始时间（结束时间）必须使用“:”进行分隔；break 为中断时间，比如，上班时间为 8：00，下班时间为18：00，中间休息2小时，12:00 - 14:00,则上午时间为 8:00 - 12:00 下午时间为 14:00-16:00；节日配置：日期使用月日，必须使用“-”分隔;数组的第一个位置为开始时间，数据第二个位置为结束时间，两个位置固定必须存在，否则此节日将被忽略;statutoryAdjustment为调休工作日，注意不记录休息日，只记录工作日",
+		"workStartTime": "00:00",
+		"workEndTime": "00:00",
+		"break": ["12:00", "12:00"],
+		"data": {
+			"2017": {
+				"newYear": ["12-31", "01-02"],
+				"chineseNewYear": ["01-27", "02-02"],
+				"qingmingFestival": ["04-02", "04-04"],
+				"laborDay": ["04-29", "05-01"],
+				"dragonBoatFestival": ["05-28", "05-30"],
+				"midAutumnFestival": ["10-08", "10-08"],
+				"nationalDay": ["10-01", "10-07"],
+				"statutoryAdjustment": ["01-22", "02-04", "04-01", "05-27", "09-30"]
+			},
+			"2018": {
+				"newYear": ["12-30", "01-01"],
+				"chineseNewYear": ["02-15", "02-21"],
+				"qingmingFestival": ["04-05", "04-07"],
+				"dragonBoatFestival": ["06-16", "06-18"],
+				"laborDay": ["04-29", "05-01"],
+				"midAutumnFestival": ["09-22", "09-24"],
+				"nationalDay": ["10-01", "10-07"],
+				"statutoryAdjustment": ["02-11", "02-24", "04-08", "04-28", "09-29", "09-30"]
+			}
+		}
+	};
+
+	var startTime = new Date("2018/1/2 01:00:00");
+	var endTime = new Date("2018/1/2 12:00:00");
+	var workTimeCalculation = new WorkTimeCalculation();
+	var reaultVal = workTimeCalculation.getWorkTime(initData, startTime, endTime);
+
+	console.log(reaultVal/(1000*3600))
+
+})();
+*/
