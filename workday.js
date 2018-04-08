@@ -1,5 +1,6 @@
 /**
  * 工作时间计算
+ * https://github.com/qiraosky
  */
 function WorkTimeCalculation() {
 	this.getWorkTime = getWorkTime;
