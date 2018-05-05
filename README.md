@@ -1,5 +1,5 @@
-# Welcome to jqpacket 
-jqpacket is a javascript integration framework <br/>
+# Welcome to webstage 
+webstage is a javascript integration framework <br/>
 
 version 0.0.0
 
