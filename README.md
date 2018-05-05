@@ -1,5 +1,5 @@
 # Welcome to jqpacket 
-jqpacket is a javascript integration framework use jquery and jquery plugin<br/>
+jqpacket is a javascript integration framework <br/>
 
 version 0.0.0
 
