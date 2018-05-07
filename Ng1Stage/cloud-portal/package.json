@@ -1,0 +1,27 @@
+{
+  "name": "webstage-Ng1Stage-cloud-portal",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.html",
+  "private": true,
+  "scripts": {
+    "dev": "gulp dev",
+    "prod": "gulp prod"
+  },
+  "author": "qiraosky",
+  "license": "MIT",
+  "devDependencies": {
+    "event-stream": "~3.3.1",
+    "gulp": "^3.9.0",
+    "gulp-angular-templatecache": "^1.7.0",
+    "gulp-autoprefixer": "^3.1.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-connect": "^2.2.0",
+    "gulp-less": "^3.3.0",
+    "gulp-minify-css": "^1.2.4",
+    "gulp-ng-annotate": "^1.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.2.0",
+    "lodash": "^4.0.0"
+  }
+}
