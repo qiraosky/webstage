@@ -4,7 +4,7 @@ import Top from './top'
 import Left from './left'
 import Content from './content'
 
-export default (props) => {
+const LayOut = (props) => {
     return (
         <div>
             <Top/>
@@ -15,3 +15,4 @@ export default (props) => {
         </div>
     )
 }
+export default LayOut;

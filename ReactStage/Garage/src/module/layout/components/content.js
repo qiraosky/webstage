@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import "./content.css"
 
 
-export default (props) => {
+const content = (props) => {
     return (
         <div className="layout_content">
             {props.children}
@@ -12,3 +12,5 @@ export default (props) => {
     )
 
 };
+
+export default content;

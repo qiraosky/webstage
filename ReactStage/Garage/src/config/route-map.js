@@ -1,8 +1,8 @@
 import React from 'react'
 import { Route, IndexRoute } from 'react-router-dom';
 
-import Helloworld from '../components/helloworld';
-import Helloworld2 from '../components/helloworld2';
+import Tablegrid from '../components/tablegrid';
+import Forms from '../components/forms';
 import LayOut from '../module/layout/components';
 
 
@@ -11,9 +11,9 @@ class RouteMap extends React.Component {
         return (
             <LayOut>
                     <div>
-                        <Route exact path="/" component={Helloworld} />
-                        <Route path="/Helloworld" component={Helloworld} />
-                        <Route path="/Helloworld2" component={Helloworld2} />
+                    <Route exact path="/" component={Tablegrid} />
+                        <Route path="/Tablegrid" component={Tablegrid} />
+                    <Route path="/Forms" component={Forms} />
                     </div>
             </LayOut>
         )
