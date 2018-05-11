@@ -3,7 +3,7 @@ webstage is javascript integration frameworks <br/>
 
 version 0.0.0
 
-1
+
 ## function list:
 1, with webcomponents<br/>
 2, route & lazy load<br/>
