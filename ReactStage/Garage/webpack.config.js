@@ -1,5 +1,5 @@
 //webpack.config.js  
-var webpack = require('webpack');
+var webpack = require('webpack'); 
 const path = require('path');
 module.exports = {
   entry: path.resolve(__dirname, './src/main.js'),
