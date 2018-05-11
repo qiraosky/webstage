@@ -1,15 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
-import "./top.css"
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import AppBar from 'material-ui/AppBar';
+
 
  const Top = () => {
     return (
-        <div className="top_body">
-            头部Bannner
-        </div>
+        <MuiThemeProvider muiTheme={getMuiTheme()}>
+            <AppBar title="系统首页" />
+        </MuiThemeProvider>
     )
-
 };
 
 export default Top;

@@ -1,6 +1,11 @@
 .layout_left{
     width:20%;
-    height: 100%;
-    border: 1px solid #000;
+    border-right: 1px solid #999;
+    border-left: 1px solid #999;
+    border-bottom: 1px solid #999;
     float:left;
+}
+
+a {
+    text-decoration: none;
 }
