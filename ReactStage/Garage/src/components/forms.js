@@ -1,9 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { DatePicker } from 'antd';
+
 
 function HelloWorld2(){
     return (
-        <h1>这是另一个 你好，世界！</h1>
+        <div>
+            <DatePicker />
+        </div>
     )
 }
 
