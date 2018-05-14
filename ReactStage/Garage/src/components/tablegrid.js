@@ -1,17 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Table, Input, InputNumber, Popconfirm, Form } from 'antd';
+import $ from 'jquery'
 
 
-const data = [];
-for (let i = 0; i < 100; i++) {
-    data.push({
-        key: i.toString(),
-        name: `Edrward ${i}`,
-        age: 32,
-        address: `London Park no. ${i}`,
-    });
-}
+
 const FormItem = Form.Item;
 const EditableContext = React.createContext();
 
@@ -72,28 +65,29 @@ class EditableCell extends React.Component {
 class EditableTable extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { data, editingKey: '' };
+        console.log(props)
+        this.state = {data: props.entitylist, editingKey: '' };
         this.columns = [
             {
-                title: 'name',
+                title: '姓名',
                 dataIndex: 'name',
                 width: '25%',
                 editable: true,
             },
             {
-                title: 'age',
+                title: '年龄',
                 dataIndex: 'age',
                 width: '15%',
                 editable: true,
             },
             {
-                title: 'address',
+                title: '地址',
                 dataIndex: 'address',
                 width: '40%',
                 editable: true,
             },
             {
-                title: 'operation',
+                title: '操作',
                 dataIndex: 'operation',
                 render: (text, record) => {
                     const editable = this.isEditing(record);
@@ -192,9 +186,27 @@ class EditableTable extends React.Component {
 }
 
 export default class Tablegrid extends React.Component{
+    constructor(props){
+        super(props)
+        this.state = {
+            entitylist : []
+        }
+        let _this = this;
+            $.ajax({
+                type: "GET",
+                async: false,
+                url: "/api/getGridList",
+                data: "",
+                success: function (msg) {
+                    _this.state.entitylist = msg
+                }
+            });
+
+    }
+
     render(){
         return (
-            <EditableTable />
+            <EditableTable entitylist={this.state.entitylist} />
         )
     }
 }

@@ -1,11 +1,11 @@
 wishes：
-1，组件库
-2，ajax调用
+1，组件库 ------- OK
+2，ajax调用 ------- OK
 3，redux 应用（根据 redux 方便程度，调整文件夹结构，当前过于复杂）
 4，与jQuery结合，封装 jQuery组件
-5，路由集成
+5，路由集成 ------- OK
 6，webpack分多文件打包
-7，mock机制
+7，mock机制 ------- OK
 
 
 

@@ -1,6 +1,9 @@
 //webpack.config.js  
 var webpack = require('webpack'); 
 const path = require('path');
+const apiMocker = require('webpack-api-mocker');
+//const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 module.exports = {
   entry: {
     //'vendor': './src/vendor.js',
@@ -30,6 +33,11 @@ module.exports = {
     //webpack.optimize.CommonsChunkPlugin has been removed, please use config.optimization.splitChunks instead.
     //new webpack.optimize.CommonsChunkPlugin({ name: 'vendor'}),
     new webpack.HotModuleReplacementPlugin()
+    /*,new HtmlWebpackPlugin({
+      title: 'react walkthrough',
+      template: "./src/index.html",
+      filename: "./index.html",
+    })*/
   ],
   /* 生成MAP文件，方便调试，生产去除 */
   devtool: '#cheap-source-map', 
@@ -42,6 +50,12 @@ module.exports = {
     stats: 'normal',
     inline: true,
     hot: true,
-    open: true
+    open: true,
+    before(app) {
+        apiMocker(app, path.resolve('./mocker.js'), {
+        // 'GET /api/users/list': 'http://localhost:3000',
+        // 'GET /api/userinfo/:id': 'http://localhost:3000',
+        })
+    }
   }
 };  
