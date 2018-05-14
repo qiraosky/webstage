@@ -1,14 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
-import "./top.css"
+import { Layout, Icon } from 'antd';
+const { Header } = Layout;
 
- const Top = () => {
+ const Top = (props) => {
     return (
-        <div className="top_body">
-            头部Bannner
-        </div>
-    )
+        <Header style={{ background: '#fff', padding: 0 }}>
+            <Icon
+                className="trigger"
+                style = {{fontSize:'30px'}}
+                type={props.collapsed ? 'menu-unfold' : 'menu-fold'}
+                onClick={props.toggle}
+            />
+        </Header>
+    ) 
 
 };
 

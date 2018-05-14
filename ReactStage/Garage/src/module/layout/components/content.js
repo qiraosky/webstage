@@ -1,16 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
-import "./content.css"
+import { Layout } from 'antd';
 
+const { Content } = Layout;
 
 const content = (props) => {
     return (
-        <div className="layout_content">
+        <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280 }}>
             {props.children}
-        </div>
+        </Content>
     )
-
 };
 
 export default content;

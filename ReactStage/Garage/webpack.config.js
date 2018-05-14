@@ -2,10 +2,13 @@
 var webpack = require('webpack'); 
 const path = require('path');
 module.exports = {
-  entry: path.resolve(__dirname, './src/main.js'),
+  entry: {
+    //'vendor': './src/vendor.js',
+    'bundle': './src/main.js'
+  },
   output: {
     path: path.resolve(__dirname, './dist'),
-    filename: "bundle.js"
+    filename: '[name].js'
   },
   module: {
     rules: [
@@ -14,7 +17,7 @@ module.exports = {
         exclude: /node_modules/,
         loader: "babel-loader",
         options: {
-          presets: ["es2015", "react"]
+          presets: ["react", "es2015","stage-0"]
         }
       },{
         test: /\.css$/,
@@ -24,6 +27,8 @@ module.exports = {
     ]  
   },
   plugins: [
+    //webpack.optimize.CommonsChunkPlugin has been removed, please use config.optimization.splitChunks instead.
+    //new webpack.optimize.CommonsChunkPlugin({ name: 'vendor'}),
     new webpack.HotModuleReplacementPlugin()
   ],
   /* 生成MAP文件，方便调试，生产去除 */

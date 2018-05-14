@@ -1,18 +1,37 @@
 import React, { Children } from 'react';
 import ReactDOM from 'react-dom';
-import Top from './top'
-import Left from './left'
-import Content from './content'
+import { Layout, Menu, Icon } from 'antd';
+const { Header, Sider, Content } = Layout;
+import EsTop from './top'
+import EsLeft from './left'
+import EsContent from './content'
 
-const LayOut = (props) => {
-    return (
-        <div>
-            <Top/>
-            <Left/>
-            <Content>
-                { props.children }
-            </Content>
-        </div>
-    )
+
+export default class EsLayOut extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            collapsed: false,
+        };
+        this.toggle = this.toggle.bind(this);
+    }
+
+    toggle() {
+        this.setState({
+            collapsed: !this.state.collapsed,
+        });
+    }
+    render() {
+        return (
+            <Layout>
+                <EsLeft collapsed={this.state.collapsed}/>
+                <Layout>
+                    <EsTop collapsed={this.state.collapsed} toggle={this.toggle} />
+                    <EsContent>
+                        {this.props.children}
+                    </EsContent>
+                </Layout>
+            </Layout>
+        );
+    }
 }
-export default LayOut;
