@@ -37,6 +37,13 @@ const { Sider } = Layout;
                             <span>Forms</span>
                         </Link>
                     </Menu.Item>
+                    <Menu.Item key="4">
+                        <Link to="/Forms1">
+                            <Icon type="upload" />
+                            <span>Forms1</span>
+                        </Link>
+                    </Menu.Item>
+
             </Menu>
         </Sider>
     )

@@ -6,6 +6,8 @@ wishes：
 5，路由集成 ------- OK
 6，webpack分多文件打包
 7，mock机制 ------- OK
+8，less sass 样式编译
+9，将 jquery easyui 整合进来
 
 
 

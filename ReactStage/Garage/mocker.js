@@ -11,7 +11,7 @@ const proxy = {
         }
         return res.send(entitylist);
     },
-    'GET /api/user': { id: 1, username: 'kenny', sex: 6 },
+    'GET /api/user': { id: 1, username: 'kenny', sex: 6 , text : 'this is a text from server' },
     'GET /api/user/list': [
         { id: 1, username: 'kenny', sex: 6 },
         { id: 2, username: 'kenny', sex: 6 }

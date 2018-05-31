@@ -40,7 +40,7 @@ module.exports = {
     })*/
   ],
   /* 生成MAP文件，方便调试，生产去除 */
-  devtool: '#cheap-source-map', 
+  devtool: 'source-map', 
   devServer: {
     contentBase: path.join(__dirname, "dist"),
     host: "127.0.0.1",

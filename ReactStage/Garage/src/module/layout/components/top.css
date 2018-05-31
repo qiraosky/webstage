@@ -3,3 +3,11 @@
     border: 1px solid #000;
     height:100px;
 }
+.toggel_button {
+    height: 66px;
+    width: 70px;
+    cursor: pointer;
+}
+.toggel_button:hover{
+    background: rgb(201, 250, 225)
+}
